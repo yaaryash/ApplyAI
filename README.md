@@ -32,8 +32,8 @@ a basic CRUD application.
 - TypeScript
 - React
 - Tailwind CSS
-- PostgreSQL
-- Prisma
+- MongoDB
+- Prisma ORM
 - AI SDK / LLM provider
 - Git & GitHub
 - GitHub Actions
@@ -48,6 +48,8 @@ a basic CRUD application.
 - [x] Create dashboard foundation
 - [x] Build dashboard application shell
 - [x] Build job application interface
+- [x] Set up MongoDB
+- [x] Configure Prisma ORM
 - [ ] Set up database
 - [ ] Implement authentication
 - [ ] Build job application management
