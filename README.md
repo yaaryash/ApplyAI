@@ -50,7 +50,7 @@ a basic CRUD application.
 - [x] Build job application interface
 - [x] Set up MongoDB
 - [x] Configure Prisma ORM
-- [ ] Set up database
+- [x] Design database schema
 - [ ] Implement authentication
 - [ ] Build job application management
 - [ ] Build dashboard and analytics
