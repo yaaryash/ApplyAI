@@ -47,6 +47,7 @@ a basic CRUD application.
 - [x] Build landing page
 - [x] Create dashboard foundation
 - [x] Build dashboard application shell
+- [x] Build job application interface
 - [ ] Set up database
 - [ ] Implement authentication
 - [ ] Build job application management
