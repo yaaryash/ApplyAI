@@ -1,61 +1,59 @@
 # ApplyAI
 
-AI-powered Job Application & Interview Tracker
+AI-powered Job Application & Interview Tracker.
 
 ## Overview
-What problem are we solving?
 
-## Features
-- [ ] Authentication
-- [ ] Job application CRUD
-- [ ] Dashboard & analytics
+ApplyAI is a full-stack web application designed to help job seekers
+organize their job applications, track interviews, analyze job
+descriptions, and prepare for interviews with AI-powered features.
+
+The goal is to build a production-oriented application rather than
+a basic CRUD application.
+
+## Planned Features
+
+- [ ] User authentication
+- [ ] Job application management
+- [ ] Application status tracking
+- [ ] Dashboard and analytics
 - [ ] Interview tracking
-- [ ] AI job description analysis
-- [ ] AI interview preparation
-- [ ] Validation & security
-- [ ] Testing
+- [ ] AI-powered job description analysis
+- [ ] AI-powered interview preparation
+- [ ] Form validation
+- [ ] Authorization and security
+- [ ] Automated testing
 - [ ] CI/CD
+- [ ] Production deployment
 
 ## Tech Stack
+
 - Next.js 16
 - TypeScript
 - React
 - Tailwind CSS
 - PostgreSQL
 - Prisma
-- AI SDK
-- ...
-
-## Architecture
-...
-
-## Database Design
-...
-
-## API / Server Actions
-...
-
-## Security
-...
-
-## Testing
-...
-
-## Deployment
-...
+- AI SDK / LLM provider
+- Git & GitHub
+- GitHub Actions
+- Vercel
 
 ## Development Progress
-- [x] Project initialization
-- [ ] UI foundation
-- [ ] Database
-- [ ] Authentication
-- [ ] Applications
-- [ ] Dashboard
-- [ ] Interviews
-- [ ] AI features
-- [ ] Testing
-- [ ] CI/CD
-- [ ] Deployment
 
-## Future Improvements
-...
+- [x] Initialize Next.js project
+- [ ] Configure UI system
+- [ ] Set up database
+- [ ] Implement authentication
+- [ ] Build job application management
+- [ ] Build dashboard
+- [ ] Build interview tracking
+- [ ] Integrate AI features
+- [ ] Add security and validation
+- [ ] Add tests
+- [ ] Configure CI/CD
+- [ ] Deploy application
+
+## Project Status
+
+🚧 Under active development.
