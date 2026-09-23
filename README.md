@@ -53,7 +53,7 @@ a basic CRUD application.
 - [x] Design database schema
 - [x] Configure Prisma Client
 - [x] Connect application to database
-- [ ] Implement authentication
+- [x] Implement authentication
 - [ ] Build job application management
 - [ ] Build dashboard and analytics
 - [ ] Build interview tracking
