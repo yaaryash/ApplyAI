@@ -51,6 +51,8 @@ a basic CRUD application.
 - [x] Set up MongoDB
 - [x] Configure Prisma ORM
 - [x] Design database schema
+- [x] Configure Prisma Client
+- [x] Connect application to database
 - [ ] Implement authentication
 - [ ] Build job application management
 - [ ] Build dashboard and analytics
