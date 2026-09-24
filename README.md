@@ -58,6 +58,7 @@ a basic CRUD application.
 - [x] Build dashboard and analytics
 - [x] Build interview tracking
 - [x] AI-powered job description analysis
+- [x] AI-powered interview preparation
 - [ ] Add security and validation
 - [ ] Add tests
 - [ ] Configure CI/CD

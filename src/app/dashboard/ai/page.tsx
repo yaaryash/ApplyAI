@@ -1,5 +1,5 @@
 import { getApplications } from "@/lib/actions/application";
-
+import InterviewPrep from "./interview-prep";
 import AIAnalyzer from "./ai-analyzer";
 
 export default async function AIPage() {
@@ -13,8 +13,7 @@ export default async function AIPage() {
         <h1 className="text-2xl font-bold">AI Tools</h1>
 
         <p className="mt-1 text-sm text-muted-foreground">
-          Analyze job descriptions and understand how well they match
-          your application.
+          Analyze job descriptions and prepare for interviews with AI.
         </p>
       </div>
 
@@ -23,11 +22,15 @@ export default async function AIPage() {
           <h2 className="font-semibold">No applications found</h2>
 
           <p className="mt-2 text-sm text-muted-foreground">
-            Create an application before using the AI analyzer.
+            Create an application before using the AI tools.
           </p>
         </div>
       ) : (
-        <AIAnalyzer applications={applications} />
+        <div className="space-y-8">
+          <AIAnalyzer applications={applications} />
+
+          <InterviewPrep applications={applications} />
+        </div>
       )}
     </div>
   );
