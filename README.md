@@ -54,8 +54,8 @@ a basic CRUD application.
 - [x] Configure Prisma Client
 - [x] Connect application to database
 - [x] Implement authentication
-- [ ] Build job application management
-- [ ] Build dashboard and analytics
+- [x] Build real job application CRUD
+- [x] Build dashboard and analytics
 - [ ] Build interview tracking
 - [ ] Integrate AI features
 - [ ] Add security and validation
