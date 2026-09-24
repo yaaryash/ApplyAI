@@ -7,23 +7,28 @@ import { getServerSession } from "next-auth";
 import { groq } from "@/lib/ai";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 
 const interviewPrepSchema = z.object({
   overview: z.string().min(1).max(2000),
 
-  technicalQuestions: z.array(
-    z.object({
-      question: z.string().min(1).max(500),
-      answerPoints: z.array(z.string()).max(8),
-    }),
-  ).max(10),
+  technicalQuestions: z
+    .array(
+      z.object({
+        question: z.string().min(1).max(500),
+        answerPoints: z.array(z.string()).max(8),
+      }),
+    )
+    .max(10),
 
-  behavioralQuestions: z.array(
-    z.object({
-      question: z.string().min(1).max(500),
-      answerPoints: z.array(z.string()).max(8),
-    }),
-  ).max(10),
+  behavioralQuestions: z
+    .array(
+      z.object({
+        question: z.string().min(1).max(500),
+        answerPoints: z.array(z.string()).max(8),
+      }),
+    )
+    .max(10),
 
   topicsToRevise: z.array(z.string()).max(15),
 
@@ -63,6 +68,15 @@ export async function generateInterviewPreparation(
     return {
       success: false,
       error: "Unauthorized",
+      preparation: null,
+    };
+  }
+  const rateLimitResult = rateLimit(`ai-interview:${session.user.id}`);
+
+  if (!rateLimitResult.success) {
+    return {
+      success: false,
+      error: `Too many requests. Try again in ${rateLimitResult.retryAfter} seconds.`,
       preparation: null,
     };
   }

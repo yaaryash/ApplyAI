@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { groq } from "@/lib/ai";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { rateLimit } from "@/lib/rate-limit";
 
 const analysisSchema = z.object({
   matchScore: z.number().int().min(0).max(100),
@@ -51,6 +52,15 @@ export async function analyzeJobDescription(
     return {
       success: false,
       error: "Unauthorized",
+      analysis: null,
+    };
+  }
+  const rateLimitResult = rateLimit(`ai-analysis:${session.user.id}`);
+
+  if (!rateLimitResult.success) {
+    return {
+      success: false,
+      error: `Too many requests. Try again in ${rateLimitResult.retryAfter} seconds.`,
       analysis: null,
     };
   }
