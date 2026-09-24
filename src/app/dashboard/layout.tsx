@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ReactNode } from "react";
+import LogoutButton from "@/components/logout-button";
 
 export default function DashboardLayout({
   children,
@@ -30,6 +31,7 @@ export default function DashboardLayout({
 
           <div className="border-t p-4">
             <NavItem href="/dashboard/settings" label="Settings" />
+            <LogoutButton />
           </div>
         </aside>
 
