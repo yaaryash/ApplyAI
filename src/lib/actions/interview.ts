@@ -338,3 +338,54 @@ export async function deleteInterview(interviewId: string) {
     };
   }
 }
+
+export async function getUpcomingInterviews() {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return {
+      success: false,
+      error: "Unauthorized",
+      interviews: [],
+    };
+  }
+
+  try {
+    const interviews = await prisma.interview.findMany({
+      where: {
+        scheduledAt: {
+          gte: new Date(),
+        },
+        result: "PENDING",
+        application: {
+          userId: session.user.id,
+        },
+      },
+      include: {
+        application: {
+          select: {
+            company: true,
+            jobTitle: true,
+          },
+        },
+      },
+      orderBy: {
+        scheduledAt: "asc",
+      },
+      take: 5,
+    });
+
+    return {
+      success: true,
+      interviews,
+    };
+  } catch (error) {
+    console.error("Get upcoming interviews error:", error);
+
+    return {
+      success: false,
+      error: "Failed to fetch upcoming interviews",
+      interviews: [],
+    };
+  }
+}

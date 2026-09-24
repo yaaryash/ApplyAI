@@ -1,8 +1,11 @@
 import { getDashboardStats } from "@/lib/actions/dashboard";
 import { getApplications } from "@/lib/actions/application";
+import { getUpcomingInterviews } from "@/lib/actions/interview";
+
 export default async function DashboardPage() {
   const result = await getDashboardStats();
   const applicationsResult = await getApplications();
+  const upcomingInterviewsResult = await getUpcomingInterviews();
 
   if (!result.success) {
     return (
@@ -53,12 +56,57 @@ export default async function DashboardPage() {
 
         {/* Upcoming Interviews */}
         <div className="rounded-xl border bg-background p-6">
-          <h2 className="text-lg font-semibold">Upcoming Interviews</h2>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold">Upcoming Interviews</h2>
 
-          <div className="mt-6 rounded-lg border border-dashed p-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              Interview tracking will appear here.
-            </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Your next scheduled interviews.
+              </p>
+            </div>
+
+            <a
+              href="/dashboard/interviews"
+              className="text-sm font-medium underline underline-offset-4"
+            >
+              View all
+            </a>
+          </div>
+
+          <div className="mt-6 space-y-4">
+            {!upcomingInterviewsResult.success ||
+            upcomingInterviewsResult.interviews.length === 0 ? (
+              <div className="rounded-lg border border-dashed p-8 text-center">
+                <p className="text-sm text-muted-foreground">
+                  No upcoming interviews.
+                </p>
+              </div>
+            ) : (
+              upcomingInterviewsResult.interviews.map((interview) => (
+                <div key={interview.id} className="rounded-lg border p-4">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="font-medium">{interview.round}</p>
+
+                      <p className="text-sm text-muted-foreground">
+                        {interview.application.jobTitle} ·{" "}
+                        {interview.application.company}
+                      </p>
+                    </div>
+
+                    <div className="text-sm font-medium">
+                      {formatInterviewDate(interview.scheduledAt)}
+                    </div>
+                  </div>
+
+                  {interview.interviewer && (
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Interviewer: {interview.interviewer}
+                    </p>
+                  )}
+                </div>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -150,5 +198,14 @@ function formatDate(date: Date) {
     day: "numeric",
     month: "short",
     year: "numeric",
+  }).format(new Date(date));
+}
+
+function formatInterviewDate(date: Date) {
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
   }).format(new Date(date));
 }
