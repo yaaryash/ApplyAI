@@ -1,27 +1,18 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const { status } = useSession();
-
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/dashboard");
-    }
-  }, [status, router]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -29,21 +20,44 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
 
-    setLoading(false);
+      const data = await response.json();
 
-    if (!result || result.error) {
-      setError("Invalid email or password.");
-      return;
+      if (!response.ok) {
+        setError(data.error || "Failed to create account.");
+        return;
+      }
+
+      const loginResult = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (!loginResult || loginResult.error) {
+        router.push("/login");
+        return;
+      }
+
+      router.push("/dashboard");
+      router.refresh();
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    router.push("/dashboard");
-    router.refresh();
   }
 
   return (
@@ -54,16 +68,42 @@ export default function LoginPage() {
             ApplyAI
           </Link>
 
-          <h1 className="mt-6 text-2xl font-bold">Welcome back</h1>
+          <h1 className="mt-6 text-2xl font-bold">
+            Create your account
+          </h1>
 
           <p className="mt-2 text-sm text-muted-foreground">
-            Sign in to continue to your job search workspace.
+            Start organizing your job search with ApplyAI.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-medium">
+            <label
+              htmlFor="name"
+              className="mb-2 block text-sm font-medium"
+            >
+              Name
+            </label>
+
+            <input
+              id="name"
+              type="text"
+              required
+              minLength={2}
+              maxLength={50}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              placeholder="Your name"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="email"
+              className="mb-2 block text-sm font-medium"
+            >
               Email
             </label>
 
@@ -90,10 +130,12 @@ export default function LoginPage() {
               id="password"
               type="password"
               required
+              minLength={8}
+              maxLength={100}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              placeholder="••••••••"
+              placeholder="Minimum 8 characters"
             />
           </div>
 
@@ -108,17 +150,17 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? "Creating account..." : "Create account"}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Don't have an account?{" "}
+          Already have an account?{" "}
           <Link
-            href="/signup"
+            href="/login"
             className="font-medium text-foreground underline underline-offset-4"
           >
-            Create one
+            Sign in
           </Link>
         </p>
       </div>
