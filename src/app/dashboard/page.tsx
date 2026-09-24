@@ -1,38 +1,63 @@
-export default function DashboardPage() {
+import { getDashboardStats } from "@/lib/actions/dashboard";
+import { getApplications } from "@/lib/actions/application";
+export default async function DashboardPage() {
+  const result = await getDashboardStats();
+  const applicationsResult = await getApplications();
+
+  if (!result.success) {
+    return (
+      <div className="rounded-xl border bg-background p-6">
+        <p className="text-sm text-destructive">
+          Failed to load dashboard statistics.
+        </p>
+      </div>
+    );
+  }
+  const stats = result.stats;
+  const statusCounts = result.statusCounts;
+
   return (
     <div className="mx-auto max-w-7xl space-y-8">
       {/* Stats */}
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Applications" value="0" />
-        <StatCard title="Interviews" value="0" />
-        <StatCard title="Offers" value="0" />
-        <StatCard title="Response Rate" value="0%" />
+        <StatCard
+          title="Applications"
+          value={stats.totalApplications.toString()}
+        />
+
+        <StatCard title="Interviews" value={stats.interviews.toString()} />
+
+        <StatCard title="Offers" value={stats.offers.toString()} />
+
+        <StatCard title="Response Rate" value={`${stats.responseRate}%`} />
       </section>
 
-      {/* Overview */}
+      {/* Application Overview */}
       <section className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-xl border bg-background p-6">
           <h2 className="text-lg font-semibold">Application Overview</h2>
 
           <p className="mt-2 text-sm text-muted-foreground">
-            Your application activity will appear here once you start adding
-            applications.
+            Track your applications by their current status.
           </p>
 
           <div className="mt-6 space-y-4">
-            <StatusRow label="Applied" value="0" />
-            <StatusRow label="Interview" value="0" />
-            <StatusRow label="Offer" value="0" />
-            <StatusRow label="Rejected" value="0" />
+            <StatusRow label="Applied" value={statusCounts.applied} />
+            <StatusRow label="Screening" value={statusCounts.screening} />
+            <StatusRow label="Interview" value={statusCounts.interview} />
+            <StatusRow label="Offer" value={statusCounts.offer} />
+            <StatusRow label="Rejected" value={statusCounts.rejected} />
+            <StatusRow label="Withdrawn" value={statusCounts.withdrawn} />
           </div>
         </div>
 
+        {/* Upcoming Interviews */}
         <div className="rounded-xl border bg-background p-6">
           <h2 className="text-lg font-semibold">Upcoming Interviews</h2>
 
           <div className="mt-6 rounded-lg border border-dashed p-8 text-center">
             <p className="text-sm text-muted-foreground">
-              No upcoming interviews.
+              Interview tracking will appear here.
             </p>
           </div>
         </div>
@@ -50,27 +75,49 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="mt-6 rounded-lg border border-dashed p-10 text-center">
-          <p className="text-sm text-muted-foreground">
-            No applications yet.
-          </p>
+        <div className="mt-6 space-y-4">
+          {!applicationsResult.success ||
+          applicationsResult.applications.length === 0 ? (
+            <div className="rounded-lg border border-dashed p-10 text-center">
+              <p className="text-sm text-muted-foreground">
+                No applications yet.
+              </p>
 
-          <p className="mt-1 text-xs text-muted-foreground">
-            Add your first application to get started.
-          </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Add your first application to get started.
+              </p>
+            </div>
+          ) : (
+            applicationsResult.applications.slice(0, 5).map((application) => (
+              <div
+                key={application.id}
+                className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div>
+                  <p className="font-medium">{application.jobTitle}</p>
+
+                  <p className="text-sm text-muted-foreground">
+                    {application.company}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <StatusBadge status={application.status} />
+
+                  <span className="text-xs text-muted-foreground">
+                    {formatDate(application.appliedDate)}
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
     </div>
   );
 }
 
-function StatCard({
-  title,
-  value,
-}: {
-  title: string;
-  value: string;
-}) {
+function StatCard({ title, value }: { title: string; value: string }) {
   return (
     <div className="rounded-xl border bg-background p-6">
       <p className="text-sm text-muted-foreground">{title}</p>
@@ -80,13 +127,7 @@ function StatCard({
   );
 }
 
-function StatusRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
+function StatusRow({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex items-center justify-between border-b pb-3 last:border-0 last:pb-0">
       <span className="text-sm">{label}</span>
@@ -94,4 +135,20 @@ function StatusRow({
       <span className="text-sm font-semibold">{value}</span>
     </div>
   );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  return (
+    <span className="rounded-full border px-2.5 py-1 text-xs font-medium">
+      {status.replace("_", " ")}
+    </span>
+  );
+}
+
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(date));
 }
